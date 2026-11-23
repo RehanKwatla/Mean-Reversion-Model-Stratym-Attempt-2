@@ -1,0 +1,16 @@
+{
+  "model": {
+    "n_features": 40,
+    "n_static": 8,
+    "n_actions": 4,
+    "encoder": "gru",
+    "hidden_size": 64,
+    "num_layers": 2,
+    "dropout": 0.25,
+    "static_hidden": 16,
+    "head_hidden": 64
+  },
+  "seq_len": 30,
+  "allow_short": true,
+  "temperature": 1.6778839826583862
+}

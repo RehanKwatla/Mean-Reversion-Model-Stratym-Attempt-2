@@ -1,0 +1,347 @@
+{
+  "schema_version": "1.0.0",
+  "policy_id": "SP-02",
+  "sequence_input": {
+    "name": "sequence",
+    "shape": [
+      "batch",
+      30,
+      40
+    ],
+    "dtype": "float32",
+    "order": "oldest bar first, newest bar last (index -1 is the decision bar)",
+    "features": [
+      {
+        "index": 0,
+        "name": "ret_1"
+      },
+      {
+        "index": 1,
+        "name": "logret_1"
+      },
+      {
+        "index": 2,
+        "name": "ret_5"
+      },
+      {
+        "index": 3,
+        "name": "ret_10"
+      },
+      {
+        "index": 4,
+        "name": "ret_20"
+      },
+      {
+        "index": 5,
+        "name": "ret_60"
+      },
+      {
+        "index": 6,
+        "name": "rsi_14"
+      },
+      {
+        "index": 7,
+        "name": "macd_pct"
+      },
+      {
+        "index": 8,
+        "name": "macd_signal_pct"
+      },
+      {
+        "index": 9,
+        "name": "macd_hist_pct"
+      },
+      {
+        "index": 10,
+        "name": "close_ema20"
+      },
+      {
+        "index": 11,
+        "name": "close_ema50"
+      },
+      {
+        "index": 12,
+        "name": "ema20_ema50"
+      },
+      {
+        "index": 13,
+        "name": "close_sma200"
+      },
+      {
+        "index": 14,
+        "name": "sma50_sma200"
+      },
+      {
+        "index": 15,
+        "name": "adx_14"
+      },
+      {
+        "index": 16,
+        "name": "di_diff"
+      },
+      {
+        "index": 17,
+        "name": "atr_pct"
+      },
+      {
+        "index": 18,
+        "name": "rv_20"
+      },
+      {
+        "index": 19,
+        "name": "rv_60"
+      },
+      {
+        "index": 20,
+        "name": "vol_chg_1"
+      },
+      {
+        "index": 21,
+        "name": "vol_ratio_20"
+      },
+      {
+        "index": 22,
+        "name": "vol_z_60"
+      },
+      {
+        "index": 23,
+        "name": "hl_range"
+      },
+      {
+        "index": 24,
+        "name": "gap_open"
+      },
+      {
+        "index": 25,
+        "name": "close_loc"
+      },
+      {
+        "index": 26,
+        "name": "rel_strength_20"
+      },
+      {
+        "index": 27,
+        "name": "rel_strength_60"
+      },
+      {
+        "index": 28,
+        "name": "bench_ret_20"
+      },
+      {
+        "index": 29,
+        "name": "bench_rv_20"
+      },
+      {
+        "index": 30,
+        "name": "bb_pos_20"
+      },
+      {
+        "index": 31,
+        "name": "bb_width_20"
+      },
+      {
+        "index": 32,
+        "name": "zscore_20"
+      },
+      {
+        "index": 33,
+        "name": "zscore_60"
+      },
+      {
+        "index": 34,
+        "name": "roll_std_pct_20"
+      },
+      {
+        "index": 35,
+        "name": "ret_3"
+      },
+      {
+        "index": 36,
+        "name": "dist_high_20"
+      },
+      {
+        "index": 37,
+        "name": "dist_low_20"
+      },
+      {
+        "index": 38,
+        "name": "rsi_5"
+      },
+      {
+        "index": 39,
+        "name": "atr_dislocation_20"
+      }
+    ],
+    "scaling": "NaN -> train median, then (x - mean) / std, then clip to +/- clip (see preprocessing.pkl)",
+    "note": "Callers pass RAW (unscaled) features; the policy scales internally."
+  },
+  "static_input": {
+    "name": "static",
+    "shape": [
+      "batch",
+      8
+    ],
+    "extras_note": "indices 0-5 are identical to SP-01; indices 6-7 (unrealized P&L, holding duration) are SP-02 additions; default 0 when absent",
+    "dtype": "float32",
+    "features": [
+      {
+        "index": 0,
+        "name": "pos_flat"
+      },
+      {
+        "index": 1,
+        "name": "pos_long"
+      },
+      {
+        "index": 2,
+        "name": "pos_short"
+      },
+      {
+        "index": 3,
+        "name": "risk_tolerance"
+      },
+      {
+        "index": 4,
+        "name": "patience"
+      },
+      {
+        "index": 5,
+        "name": "aggressiveness"
+      },
+      {
+        "index": 6,
+        "name": "unrealized_pnl_scaled"
+      },
+      {
+        "index": 7,
+        "name": "holding_bars_scaled"
+      }
+    ],
+    "position_encoding": {
+      "one_hot_order": [
+        "pos_flat",
+        "pos_long",
+        "pos_short"
+      ],
+      "position_values": [
+        0,
+        1,
+        -1
+      ]
+    },
+    "profile_ranges": {
+      "risk_tolerance": [
+        0.0,
+        1.0
+      ],
+      "patience": [
+        0.0,
+        1.0
+      ],
+      "aggressiveness": [
+        0.0,
+        1.0
+      ]
+    },
+    "default_profile": {
+      "risk_tolerance": 0.5,
+      "patience": 0.5,
+      "aggressiveness": 0.5
+    }
+  },
+  "output": {
+    "action_probs": [
+      "batch",
+      4
+    ],
+    "action_space": {
+      "0": "HOLD",
+      "1": "BUY",
+      "2": "SELL",
+      "3": "EXIT"
+    },
+    "confidence": "temperature-calibrated probability of the chosen action after masking invalid actions"
+  },
+  "valid_actions": {
+    "flat": [
+      "HOLD",
+      "BUY",
+      "SELL (only if allow_short)"
+    ],
+    "long": [
+      "HOLD",
+      "EXIT"
+    ],
+    "short": [
+      "HOLD",
+      "EXIT"
+    ]
+  },
+  "execution_convention": "decision at close of bar t; fill at open of bar t+1",
+  "compatibility": {
+    "family_rule": "every SP-0x policy consumes a PREFIX-COMPATIBLE superset: shared base features first, policy extras appended",
+    "shared_sequence_features": [
+      "ret_1",
+      "logret_1",
+      "ret_5",
+      "ret_10",
+      "ret_20",
+      "ret_60",
+      "rsi_14",
+      "macd_pct",
+      "macd_signal_pct",
+      "macd_hist_pct",
+      "close_ema20",
+      "close_ema50",
+      "ema20_ema50",
+      "close_sma200",
+      "sma50_sma200",
+      "adx_14",
+      "di_diff",
+      "atr_pct",
+      "rv_20",
+      "rv_60",
+      "vol_chg_1",
+      "vol_ratio_20",
+      "vol_z_60",
+      "hl_range",
+      "gap_open",
+      "close_loc",
+      "rel_strength_20",
+      "rel_strength_60",
+      "bench_ret_20",
+      "bench_rv_20"
+    ],
+    "sp02_extra_sequence_features": [
+      "bb_pos_20",
+      "bb_width_20",
+      "zscore_20",
+      "zscore_60",
+      "roll_std_pct_20",
+      "ret_3",
+      "dist_high_20",
+      "dist_low_20",
+      "rsi_5",
+      "atr_dislocation_20"
+    ],
+    "shared_static_features": [
+      "pos_flat",
+      "pos_long",
+      "pos_short",
+      "risk_tolerance",
+      "patience",
+      "aggressiveness"
+    ],
+    "sp02_extra_static_features": [
+      "unrealized_pnl_scaled",
+      "holding_bars_scaled"
+    ],
+    "state_dict_keys": [
+      "sequence",
+      "position",
+      "profile",
+      "unrealized_pnl (optional)",
+      "holding_bars (optional)"
+    ]
+  }
+}

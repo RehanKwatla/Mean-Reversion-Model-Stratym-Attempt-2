@@ -1,0 +1,10 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.log
+
+# Checkpoints / Large Training Histories
+checkpoints/
+figures/
+equity_curve.csv
